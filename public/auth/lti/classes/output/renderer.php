@@ -45,8 +45,7 @@ class renderer extends \plugin_renderer_base {
         if (isloggedin()) {
             global $USER;
             $accountinfo = [
-                'firstname' => $USER->firstname,
-                'lastname' => $USER->lastname,
+                'fullname' => fullname($USER),
                 'email' => $USER->email,
                 'picturehtml' => $this->output->user_picture($USER,  ['size' => 35, 'class' => 'round']),
             ];

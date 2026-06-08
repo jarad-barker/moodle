@@ -95,9 +95,12 @@ if ($action === 'create') {
 }
 
 if ($action === 'delete') {
+    global $DB;
+
     $PAGE->navbar->add(get_string('deletetoken', 'webservice'), $PAGE->url);
     $webservicemanager = new webservice();
     $token = $webservicemanager->get_token_by_id_with_details($tokenid);
+    $tokenuser = $DB->get_record('user', ['id' => $token->creatorid]);
 
     if ($token->creatorid != $USER->id) {
         require_capability('moodle/webservice:managealltokens', context_system::instance());
@@ -112,7 +115,7 @@ if ($action === 'delete') {
 
     echo $OUTPUT->confirm(
         get_string('deletetokenconfirm', 'webservice', [
-            'user' => $token->firstname . ' ' . $token->lastname,
+            'user' => core_user::get_fullname($tokenuser),
             'service' => $token->name,
         ]),
         new single_button(new moodle_url('/admin/webservice/tokens.php', [

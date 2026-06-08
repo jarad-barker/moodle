@@ -314,18 +314,14 @@ class core_webservice_renderer extends plugin_renderer_base {
 
         if (!empty($tokens)) {
             foreach ($tokens as $token) {
+                $creator = core_user::get_fullname($DB->get_record('user', ['id' => $token->creatorid]));
+                $reset = '';
 
                 if ($token->creatorid == $userid) {
                     $reset = html_writer::link(new moodle_url('/user/managetoken.php', [
                         'action' => 'resetwstoken',
                         'tokenid' => $token->id,
                     ]), get_string('reset'));
-                    $creator = $token->firstname . " " . $token->lastname;
-                } else {
-                    //retrieve administrator name
-                    $admincreator = $DB->get_record('user', array('id'=>$token->creatorid));
-                    $creator = $admincreator->firstname . " " . $admincreator->lastname;
-                    $reset = '';
                 }
 
                 $userprofilurl = new moodle_url('/user/view.php?id=' . $token->creatorid);
