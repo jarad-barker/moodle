@@ -52,7 +52,9 @@ if ( !is_siteadmin($USER->id)
         $token = $webservice->get_created_by_user_ws_token($USER->id, $tokenid);
         // Display confirmation page to Reset the token.
         if (!$confirm) {
-            $resetconfirmation = $wsrenderer->user_reset_token_confirmation($token);
+            $displayname = \core_user::get_fullname($USER);
+
+            $resetconfirmation = $wsrenderer->user_reset_token_confirmation($token, $displayname);
         } else {
             // Delete the token that need to be regenerated.
             require_sesskey();

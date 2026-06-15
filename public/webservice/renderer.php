@@ -263,17 +263,24 @@ class core_webservice_renderer extends plugin_renderer_base {
      * Display Reset token confirmation box
      *
      * @param stdClass $token token to reset
+     * @param string $displayname the display name of the token owner
      * @return string html
      */
-    public function user_reset_token_confirmation($token) {
+    public function user_reset_token_confirmation($token, string $displayname) {
         $managetokenurl = '/user/managetoken.php';
         $optionsyes = ['tokenid' => $token->id, 'action' => 'resetwstoken', 'confirm' => 1];
         $formcontinue = new single_button(new moodle_url($managetokenurl, $optionsyes), get_string('reset'));
         $formcancel = new single_button(new moodle_url($managetokenurl), get_string('cancel'), 'get');
-        $html = $this->output->confirm(get_string('resettokenconfirm', 'webservice',
-                                (object) array('user' => $token->firstname . " " .
-                                    $token->lastname, 'service' => $token->name)),
-                        $formcontinue, $formcancel);
+        $html = $this->output->confirm(
+            get_string(
+                'resettokenconfirm',
+                'webservice',
+                (object) ['user' => $displayname,
+                'service' => $token->name]
+            ),
+            $formcontinue,
+            $formcancel
+        );
         return $html;
     }
 
@@ -314,18 +321,14 @@ class core_webservice_renderer extends plugin_renderer_base {
 
         if (!empty($tokens)) {
             foreach ($tokens as $token) {
+                $creator = core_user::get_fullname($DB->get_record('user', ['id' => $token->creatorid]));
+                $reset = '';
 
                 if ($token->creatorid == $userid) {
                     $reset = html_writer::link(new moodle_url('/user/managetoken.php', [
                         'action' => 'resetwstoken',
                         'tokenid' => $token->id,
                     ]), get_string('reset'));
-                    $creator = $token->firstname . " " . $token->lastname;
-                } else {
-                    //retrieve administrator name
-                    $admincreator = $DB->get_record('user', array('id'=>$token->creatorid));
-                    $creator = $admincreator->firstname . " " . $admincreator->lastname;
-                    $reset = '';
                 }
 
                 $userprofilurl = new moodle_url('/user/view.php?id=' . $token->creatorid);
