@@ -49,7 +49,7 @@ class export_form extends moodleform {
         $mform->addElement('text', 'author',
             get_string('author', 'tool_admin_presets'), 'maxlength="254" size="60"');
         $mform->setType('author', PARAM_TEXT);
-        $mform->setDefault('author', $USER->firstname . ' ' . $USER->lastname);
+        $mform->setDefault('author', \core_user::get_fullname($USER));
 
         $mform->addElement('checkbox', 'includesensiblesettings',
             get_string('includesensiblesettings', 'tool_admin_presets'));
