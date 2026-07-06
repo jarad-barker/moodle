@@ -1429,8 +1429,9 @@ class user {
         // Clone the user so that it does not mess up the original object.
         $user = clone($user);
 
-        // Override options.
-        $override = $options["override"] ?? false;
+        // Determine if we should show fullnames from either the override option being set, or the capability being present.
+        $context ??= context_system::instance();
+        $override = $options["override"] ?? has_capability('moodle/site:viewfullnames', $context);
 
         if (!isset($user->firstname) && !isset($user->lastname)) {
             return '';
